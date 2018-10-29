@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@author: 柯西君_BingWong
+@author:    Roy T.Burns
+@company:   MuddyFishing(摸鱼科技)
 #"""
 
 import urllib
@@ -56,7 +57,7 @@ def parse(url,DIRTH_DATA,DIRTH_TERMINATION,DIRTH_MD):
             save_file(markdown,'processing/data/index.md')
                 
             #download xls file
-            status_name = DIRTH_DATA + date + '.xls'title
+            status_name = DIRTH_DATA + date + '.xls' #title
             status_file = soup.find_all(re.compile("^a"))[1]
             status_file = url[:-21] + status_file['href'][1:]
             urllib.request.urlretrieve(status_file, status_name)
@@ -79,4 +80,3 @@ def parse(url,DIRTH_DATA,DIRTH_TERMINATION,DIRTH_MD):
         print(e)
 
 #parse(url,DIRTH_DATA,DIRTH_MD)
-

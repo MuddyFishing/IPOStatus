@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: 柯西君_BingWong
+@author:    Roy T.Burns
+@company:   MuddyFishing(摸鱼科技)
 #"""
+
 from pyecharts import Style,Map
 from pyecharts import  Line, Scatter, EffectScatter, Pie, Gauge, Bar,WordCloud
 from pyecharts import Grid, Page
@@ -38,7 +40,7 @@ def create_charts(path):
         data['板块'] = sheet
         df_data = df_data.append(data, ignore_index=True)
     province = transform(df_data['注册地'].tolist())['省']
-    df_data['省'] = [x[:-1]  if len(x)==3 else x for x in province.values]
+    df_data['省'] = [x[:-1]  if len(x)==3 else x[0:2] for x in province.values]
     df_data.replace('', np.nan, inplace=True)
     df_data['省'].fillna(df_data['注册地'], inplace=True)
     # print(df_data['省'].value_counts().tolist())
@@ -64,7 +66,7 @@ def create_charts(path):
     value = df_data['省'].value_counts().tolist()
     attr = df_data['省'].value_counts().index.tolist()
     data = [(name,val) for (name,val) in zip(attr,value)]
-    chart = Map("IPO申报企业分布图","cnVaR.cn",title_pos='center', **style.init_style)
+    chart = Map("IPO申报企业分布图", "摸鱼科技", title_pos='center', **style.init_style)
     chart.add("", attr, value, maptype='china',
               is_visualmap=True,
               is_label_show=True,
@@ -80,7 +82,7 @@ def create_charts(path):
     bar_diff.add("受理企业总数", date_stat, total_stat)
     bar_diff.add("增长(减少)企业数", date_stat, diff_stat, legend_pos="15%")
 
-    bar_stat = Bar("申报企业情况")
+    bar_stat = Bar("申报企业情况", "摸鱼科技")
     bar_stat.add("已过会", date_stat, passed_stat, is_stack=True)
     bar_stat.add("待审企业", date_stat, queue_stat, is_stack=True)
     bar_stat.add("中止审查企业", date_stat, failed_stat, is_stack=True,legend_pos="60%")
@@ -94,17 +96,17 @@ def create_charts(path):
     #
     v1 = df_data['所属行业'].value_counts().tolist()
     attr = df_data['所属行业'].value_counts().index.tolist()
-    pie = Pie("所属行业分布","cnVaR.cn", title_pos="center", **style.init_style)
+    pie = Pie("所属行业分布", "摸鱼科技", title_pos="center", **style.init_style)
     pie.add("", attr, v1, radius=[45, 55], center=[50, 50],
             legend_pos="85%", legend_orient='vertical')
     page.add(pie)
 
     #
-    chart = Pie('申报企业所占板块的比例', "数据来自中国证券监督管理委员会 ",
-                title_pos='center', **style.init_style)
     total_counts = df_data['板块'].count()
+    chart = Pie('申报企业所占板块的比例', "申报企业总数： " + str(total_counts),
+                title_pos='center', **style.init_style)
     for exchange,counts,position in zip(df_data['板块'].unique(),df_data['板块'].value_counts(),range(1,4)):
-        chart.add("", [exchange, "总数"], [counts, total_counts], center=[25*position, 30], radius=[28, 34],
+        chart.add("", [exchange, ""], [counts, total_counts - counts], center=[25*position, 30], radius=[28, 34],
                   label_pos='center', is_label_show=True, label_text_color=None, legend_top="center" )
     page.add(chart)
     
@@ -114,7 +116,7 @@ def create_charts(path):
     v1 = df_data['会计师事务所'].value_counts().tolist()
     v2 = df_data['保荐机构'].value_counts().tolist()
     #chart_accountants
-    chart_accountants = Bar("会计师事务所 - 统计图","cnVaR.cn",title_pos="center", **style.init_style)
+    chart_accountants = Bar("会计师事务所 - 统计图","摸鱼科技",title_pos="center", **style.init_style)
     chart_accountants.add("会计师事务所", attr1, v1,legend_pos="75%",
               mark_point=["max", "min"], is_datazoom_show=True, datazoom_range=[0, 40], datazoom_type='both',
               xaxis_interval=0, xaxis_rotate=30, yaxis_rotate=30)
@@ -122,7 +124,7 @@ def create_charts(path):
     chart.add(chart_accountants, grid_bottom="30%")
     page.add(chart)
     #chart_sponsor
-    chart_sponsor = Bar("保荐机构 - 统计图","cnVaR.cn",title_pos="center", **style.init_style)
+    chart_sponsor = Bar("保荐机构 - 统计图","摸鱼科技",title_pos="center", **style.init_style)
     chart_sponsor.add("保荐机构", attr2, v2,legend_pos="75%",
               mark_point=["max", "min"], is_datazoom_show=True, datazoom_range=[0, 40], datazoom_type='both',
               xaxis_interval=0, xaxis_rotate=30, yaxis_rotate=30,yaxis_margin=50)
@@ -132,5 +134,4 @@ def create_charts(path):
 
     return page
 
-#create_charts().render('./graph.html')
-
+# create_charts('processing/data/IPOstatus/data/').render('./graph.html')

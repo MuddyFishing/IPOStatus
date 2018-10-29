@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 23 00:07:51 2018
-
-@author: 柯西君_BingWong
+@author:    Roy T.Burns
+@company:   MuddyFishing(摸鱼科技)
 #"""
+
 import pandas as pd
 from tabulate import tabulate
 import glob
